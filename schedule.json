@@ -1,0 +1,193 @@
+{
+  "00:00": {
+    "Dam": { "minor": "Matriarch", "major": null },
+    "Buried City": { "minor": null, "major": "Night Raid" },
+    "Spaceport": { "minor": "Harvest", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "01:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Night Raid" },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "02:00": {
+    "Dam": { "minor": null, "major": "Night Raid" },
+    "Buried City": { "minor": "Uncovered Caches", "major": null },
+    "Spaceport": { "minor": "Husk Graveyard", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": "Night Raid" }
+  },
+
+  "03:00": {
+    "Dam": { "minor": "Lush Blooms", "major": null },
+    "Buried City": { "minor": "Matriarch", "major": "Night Raid" },
+    "Spaceport": { "minor": null, "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "04:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Electromagnetic Storm" },
+    "Blue Gate": { "minor": null, "major": "Night Raid" },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "05:00": {
+    "Dam": { "minor": "Husk Graveyard", "major": "Electromagnetic Storm" },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": null },
+    "Blue Gate": { "minor": "Harvest", "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "06:00": {
+    "Dam": { "minor": "Prospecting Probes", "major": null },
+    "Buried City": { "minor": null, "major": "Night Raid" },
+    "Spaceport": { "minor": "Launch Tower Loot", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "07:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Night Raid" },
+    "Blue Gate": { "minor": "Electromagnetic Storm", "major": "Prospecting Probes" },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "08:00": {
+    "Dam": { "minor": "Lush Blooms", "major": "Night Raid" },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": "Prospecting Probes", "major": null },
+    "Blue Gate": { "minor": "Lush Blooms", "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "09:00": {
+    "Dam": { "minor": "Harvest", "major": null },
+    "Buried City": { "minor": null, "major": "Night Raid" },
+    "Spaceport": { "minor": "Prospecting Probes", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "10:00": {
+    "Dam": { "minor": "Husk Graveyard", "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Hidden Bunker" },
+    "Blue Gate": { "minor": null, "major": "Night Raid" },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "11:00": {
+    "Dam": { "minor": "Prospecting Probes", "major": "Electromagnetic Storm" },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": null },
+    "Blue Gate": { "minor": "Matriarch", "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "12:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": "Night Raid" },
+    "Spaceport": { "minor": "Lush Blooms", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+  
+  "13:00": {
+    "Dam": { "minor": "Prospecting Probes", "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Night Raid" },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "14:00": {
+    "Dam": { "minor": "Husk Graveyard", "major": "Night Raid" },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Hidden Caches" },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "15:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": "Uncovered Caches", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "16:00": {
+    "Dam": { "minor": "Harvest", "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Electromagnetic Storm" },
+    "Blue Gate": { "minor": null, "major": "Electromagnetic Storm" },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "17:00": {
+    "Dam": { "minor": "Lush Blooms", "major": "Electromagnetic Storm" },
+    "Buried City": { "minor": "Lush Blooms", "major": null },
+    "Spaceport": { "minor": null, "major": null },
+    "Blue Gate": { "minor": "Harvest", "major": null },
+    "Stella Montis": { "minor": null, "major": "Night Raid" }
+  },
+
+  "18:00": {
+    "Dam": { "minor": null, "major": "Night Raid" },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": "Harvest", "major": null },
+    "Blue Gate": { "minor": "Husk Graveyard", "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "19:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Hidden Bunker" },
+    "Blue Gate": { "minor": null, "major": "Night Raid" },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "20:00": {
+    "Dam": { "minor": "Matriarch", "major": null },
+    "Buried City": { "minor": "Uncovered Caches", "major": null },
+    "Spaceport": { "minor": null, "major": null },
+    "Blue Gate": { "minor": "Lush Blooms", "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "21:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": "Night Raid" },
+    "Spaceport": { "minor": "Matriarch", "major": null },
+    "Blue Gate": { "minor": null, "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "22:00": {
+    "Dam": { "minor": null, "major": null },
+    "Buried City": { "minor": null, "major": null },
+    "Spaceport": { "minor": null, "major": "Night Raid" },
+    "Blue Gate": { "minor": null, "major": "Electromagnetic Storm" },
+    "Stella Montis": { "minor": null, "major": null }
+  },
+
+  "23:00": {
+    "Dam": { "minor": "Uncovered Caches", "major": null },
+    "Buried City": { "minor": "Prospecting Probes", "major": null },
+    "Spaceport": { "minor": null, "major": "Electromagnetic Storm" },
+    "Blue Gate": { "minor": "Matriarch", "major": null },
+    "Stella Montis": { "minor": null, "major": null }
+  }
+}
