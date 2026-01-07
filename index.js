@@ -6,17 +6,25 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
-function getUpcomingHoursUTC(hoursAhead) {
+function getUpcomingSlots(hoursAhead) {
   const now = new Date();
-  now.setUTCMinutes(0, 0, 0);
+  const slots = [];
 
-  const hours = [];
   for (let i = 0; i <= hoursAhead; i++) {
     const d = new Date(now.getTime() + i * 60 * 60 * 1000);
+    d.setUTCMinutes(0, 0, 0);
+
     const hh = String(d.getUTCHours()).padStart(2, '0');
-    hours.push(`${hh}:00`);
+    const key = `${hh}:00`;
+
+    slots.push({
+      key,
+      date: d,
+      timestamp: Math.floor(d.getTime() / 1000)
+    });
   }
-  return hours;
+
+  return slots;
 }
 
 client.once('ready', () => {
@@ -28,32 +36,32 @@ client.on('interactionCreate', async interaction => {
   if (interaction.commandName !== 'events') return;
 
   const hoursAhead = interaction.options.getInteger('hours') ?? 2;
-  const hours = getUpcomingHoursUTC(hoursAhead);
+  const slots = getUpcomingSlots(hoursAhead);
 
-  let reply = `🛰 **ARC Raiders – Upcoming Events (UTC)**\n`;
+  let reply = `🛰 **ARC Raiders – Upcoming Events**\n`;
 
-  for (const hour of hours) {
-    const slot = schedule[hour];
-    if (!slot) continue;
+  for (const slot of slots) {
+    const data = schedule[slot.key];
+    if (!data) continue;
 
-    let hourHasEvents = false;
-    let block = `\n⏰ **${hour}**\n`;
+    let hasEvents = false;
+    let block = `\n⏰ <t:${slot.timestamp}:t> → <t:${slot.timestamp}:R>\n`;
 
-    for (const [zone, events] of Object.entries(slot)) {
-      const entries = [];
-      if (events.minor) entries.push(`Minor: ${events.minor}`);
-      if (events.major) entries.push(`Major: ${events.major}`);
+    for (const [zone, events] of Object.entries(data)) {
+      const parts = [];
+      if (events.minor) parts.push(`Minor: ${events.minor}`);
+      if (events.major) parts.push(`Major: ${events.major}`);
 
-      if (entries.length > 0) {
-        hourHasEvents = true;
-        block += `• **${zone}** → ${entries.join(' | ')}\n`;
+      if (parts.length) {
+        hasEvents = true;
+        block += `• **${zone}** → ${parts.join(' | ')}\n`;
       }
     }
 
-    if (hourHasEvents) reply += block;
+    if (hasEvents) reply += block;
   }
 
-  if (reply.trim() === '🛰 **ARC Raiders – Upcoming Events (UTC)**') {
+  if (reply.trim() === '🛰 **ARC Raiders – Upcoming Events**') {
     reply += '\nNo events in the selected time window.';
   }
 
