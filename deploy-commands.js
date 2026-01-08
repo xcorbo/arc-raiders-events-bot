@@ -1,20 +1,26 @@
-import { REST, Routes, SlashCommandBuilder } from "discord.js";
+const { REST, Routes, SlashCommandBuilder } = require('discord.js');
+require('dotenv').config();
 
 const commands = [
   new SlashCommandBuilder()
-    .setName("events")
-    .setDescription("Show ARC Raiders events for the next 2 hours"),
-
+    .setName('events')
+    .setDescription('Show active and upcoming events'),
   new SlashCommandBuilder()
-    .setName("eventsall")
-    .setDescription("Show ALL ARC Raiders events for today (UTC)")
+    .setName('eventsall')
+    .setDescription('Show ALL events for today (debug)')
 ].map(cmd => cmd.toJSON());
 
-const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
-await rest.put(
-  Routes.applicationCommands(process.env.CLIENT_ID),
-  { body: commands }
-);
-
-console.log("✅ Slash commands deployed");
+(async () => {
+  try {
+    console.log('Deploying commands...');
+    await rest.put(
+      Routes.applicationCommands(process.env.CLIENT_ID),
+      { body: commands }
+    );
+    console.log('Commands deployed');
+  } catch (err) {
+    console.error(err);
+  }
+})();
