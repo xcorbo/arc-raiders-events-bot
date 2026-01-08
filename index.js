@@ -19,9 +19,8 @@ function getEventWindow(startStr, endStr) {
   const start = parseTimeToday(startStr)
   let end = parseTimeToday(endStr)
 
-  // midnight wrap (23:00 -> 00:00)
   if (end <= start) {
-    end.setDate(end.getDate() + 1)
+    end.setDate(end.getDate() + 1) // midnight wrap
   }
 
   return { start, end }
@@ -49,17 +48,10 @@ client.on("interactionCreate", async interaction => {
       for (const t of ev.times) {
         const { start, end } = getEventWindow(t.start, t.end)
 
-        let relevant = false
-
-        if (interaction.commandName === "eventsactive") {
-          // ONLY events active right now
-          relevant = start <= now && end > now
-        } else if (interaction.commandName === "events") {
-          // active + upcoming
-          relevant = end > now && start < windowEnd
-        } else {
-          continue
-        }
+        const relevant =
+          interaction.commandName === "eventsall"
+            ? end > now
+            : end > now && start < windowEnd
 
         if (!relevant) continue
 
@@ -74,7 +66,7 @@ client.on("interactionCreate", async interaction => {
     }
 
     if (Object.keys(mapGroups).length === 0) {
-      return interaction.reply("No matching events.")
+      return interaction.reply("No active or upcoming events.")
     }
 
     let output = ""

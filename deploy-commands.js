@@ -1,93 +1,34 @@
-const { Client, GatewayIntentBits } = require("discord.js")
-const fs = require("fs")
+const { REST, Routes, SlashCommandBuilder } = require("discord.js")
 require("dotenv").config()
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds]
-})
+const commands = [
+  new SlashCommandBuilder()
+    .setName("events")
+    .setDescription("Show active and upcoming ARC Raiders events")
+    .addIntegerOption(opt =>
+      opt
+        .setName("hours")
+        .setDescription("How many hours ahead to look")
+        .setMinValue(1)
+        .setMaxValue(23)
+    ),
 
-const schedule = JSON.parse(fs.readFileSync("./schedule.json", "utf8")).data
+  new SlashCommandBuilder()
+    .setName("eventsall")
+    .setDescription("Show all events for today")
+]
 
-function parseTimeToday(timeStr) {
-  const [h, m] = timeStr.split(":").map(Number)
-  const d = new Date()
-  d.setHours(h, m, 0, 0)
-  return d
-}
+const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN)
 
-function getEventWindow(startStr, endStr) {
-  const start = parseTimeToday(startStr)
-  let end = parseTimeToday(endStr)
-
-  // midnight wrap (23:00 -> 00:00)
-  if (end <= start) {
-    end.setDate(end.getDate() + 1)
-  }
-
-  return { start, end }
-}
-
-function unix(date) {
-  return Math.floor(date.getTime() / 1000)
-}
-
-client.once("clientReady", () => {
-  console.log(`Logged in as ${client.user.tag}`)
-})
-
-client.on("interactionCreate", async interaction => {
-  if (!interaction.isChatInputCommand()) return
-
+;(async () => {
   try {
-    const now = new Date()
-    const hours = interaction.options.getInteger("hours") ?? 2
-    const windowEnd = new Date(now.getTime() + hours * 60 * 60 * 1000)
-
-    let mapGroups = {}
-
-    for (const ev of schedule) {
-      for (const t of ev.times) {
-        const { start, end } = getEventWindow(t.start, t.end)
-
-        let relevant = false
-
-        if (interaction.commandName === "eventsactive") {
-          // ONLY events active right now
-          relevant = start <= now && end > now
-        } else if (interaction.commandName === "events") {
-          // active + upcoming
-          relevant = end > now && start < windowEnd
-        } else {
-          continue
-        }
-
-        if (!relevant) continue
-
-        const line =
-          start <= now
-            ? `Started <t:${unix(start)}:R> -> ends <t:${unix(end)}:R>`
-            : `Starts <t:${unix(start)}:R> -> ends <t:${unix(end)}:R>`
-
-        if (!mapGroups[ev.map]) mapGroups[ev.map] = []
-        mapGroups[ev.map].push(`• ${ev.name} — ${line}`)
-      }
-    }
-
-    if (Object.keys(mapGroups).length === 0) {
-      return interaction.reply("No matching events.")
-    }
-
-    let output = ""
-    for (const map of Object.keys(mapGroups)) {
-      output += `**${map}**\n`
-      output += mapGroups[map].join("\n") + "\n\n"
-    }
-
-    await interaction.reply(output.trim())
-  } catch (err) {
-    console.error(err)
-    await interaction.reply("Error processing events.")
+    console.log("Deploying slash commands...")
+    await rest.put(
+      Routes.applicationCommands(process.env.CLIENT_ID),
+      { body: commands.map(c => c.toJSON()) }
+    )
+    console.log("Commands deployed")
+  } catch (e) {
+    console.error(e)
   }
-})
-
-client.login(process.env.DISCORD_TOKEN)
+})()
