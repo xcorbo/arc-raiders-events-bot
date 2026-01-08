@@ -14,8 +14,8 @@ const commands = [
     ),
 
   new SlashCommandBuilder()
-    .setName("eventsall")
-    .setDescription("Show all events for today")
+    .setName("eventsactive")
+    .setDescription("Show events active right now")
 ]
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN)
@@ -28,7 +28,9 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN)
       { body: commands.map(c => c.toJSON()) }
     )
     console.log("Commands deployed")
+    process.exit(0)
   } catch (e) {
     console.error(e)
+    process.exit(1)
   }
 })()

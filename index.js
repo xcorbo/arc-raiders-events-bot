@@ -48,10 +48,15 @@ client.on("interactionCreate", async interaction => {
       for (const t of ev.times) {
         const { start, end } = getEventWindow(t.start, t.end)
 
-        const relevant =
-          interaction.commandName === "eventsall"
-            ? end > now
-            : end > now && start < windowEnd
+        let relevant = false
+
+        if (interaction.commandName === "eventsactive") {
+          // ONLY active right now
+          relevant = start <= now && end > now
+        } else if (interaction.commandName === "events") {
+          // active + upcoming
+          relevant = end > now && start < windowEnd
+        }
 
         if (!relevant) continue
 
@@ -66,7 +71,7 @@ client.on("interactionCreate", async interaction => {
     }
 
     if (Object.keys(mapGroups).length === 0) {
-      return interaction.reply("No active or upcoming events.")
+      return interaction.reply("No matching events.")
     }
 
     let output = ""
