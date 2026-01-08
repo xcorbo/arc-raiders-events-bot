@@ -20,7 +20,7 @@ function timeToDate(baseDate, timeStr) {
   return d;
 }
 
-// ---- BUILD EVENTS (generic) ----
+// ---- BUILD EVENTS ----
 function buildEvents({ hoursAhead = null, todayOnly = false }) {
   const now = new Date();
   const cutoff = hoursAhead
@@ -45,7 +45,7 @@ function buildEvents({ hoursAhead = null, todayOnly = false }) {
         let start = timeToDate(day, t.start);
         let end = timeToDate(day, t.end);
 
-        // midnight rollover
+        // Handle midnight rollover
         if (end <= start) {
           end = new Date(end.getTime() + 86400000);
         }
@@ -67,12 +67,35 @@ function buildEvents({ hoursAhead = null, todayOnly = false }) {
   return events.sort((a, b) => a.startUnix - b.startUnix);
 }
 
-// ---- BOT READY ----
+// ---- FORMAT HELPERS ----
+function formatRelative(startUnix, endUnix) {
+  const now = Math.floor(Date.now() / 1000);
+
+  if (now >= startUnix && now <= endUnix) {
+    return `▶ Started ${Math.floor((now - startUnix) / 60)}m ago — ends in ${Math.ceil((endUnix - now) / 60)}m`;
+  }
+
+  if (now < startUnix) {
+    return `▶ Starts in ${Math.ceil((startUnix - now) / 60)}m — ends in ${Math.ceil((endUnix - now) / 60)}m`;
+  }
+
+  return `▶ Ended ${Math.floor((now - endUnix) / 60)}m ago`;
+}
+
+function groupByMap(events) {
+  return events.reduce((acc, e) => {
+    if (!acc[e.map]) acc[e.map] = [];
+    acc[e.map].push(e);
+    return acc;
+  }, {});
+}
+
+// ---- READY ----
 client.once("ready", () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
-// ---- SLASH COMMANDS ----
+// ---- COMMANDS ----
 client.on("interactionCreate", async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -84,17 +107,23 @@ client.on("interactionCreate", async interaction => {
       return interaction.reply("No events in the next 2 hours.");
     }
 
+    const grouped = groupByMap(events);
     let msg = "**🛰️ ARC Raiders — Events (Next 2h)**\n\n";
 
-    for (const e of events) {
-      msg += `**${e.map}** — ${e.name}\n`;
-      msg += `⏰ <t:${e.startUnix}:R> → <t:${e.endUnix}:R>\n\n`;
+    for (const map of Object.keys(grouped)) {
+      msg += `🗺️ **${map.toUpperCase()}**\n`;
+
+      for (const e of grouped[map]) {
+        msg += `• **${e.name}**\n`;
+        msg += `  ${formatRelative(e.startUnix, e.endUnix)}\n`;
+        msg += `  ⏰ <t:${e.startUnix}:t> → <t:${e.endUnix}:t>\n\n`;
+      }
     }
 
     return interaction.reply(msg);
   }
 
-  // /eventsall → ALL events today (UTC)
+  // /eventsall → all events today
   if (interaction.commandName === "eventsall") {
     const events = buildEvents({ todayOnly: true });
 
@@ -102,11 +131,17 @@ client.on("interactionCreate", async interaction => {
       return interaction.reply("No events found for today.");
     }
 
+    const grouped = groupByMap(events);
     let msg = "**🛰️ ARC Raiders — ALL Events Today (UTC)**\n\n";
 
-    for (const e of events) {
-      msg += `**${e.map}** — ${e.name}\n`;
-      msg += `⏰ <t:${e.startUnix}:t> → <t:${e.endUnix}:t>\n\n`;
+    for (const map of Object.keys(grouped)) {
+      msg += `🗺️ **${map.toUpperCase()}**\n`;
+
+      for (const e of grouped[map]) {
+        msg += `• **${e.name}**\n`;
+        msg += `  ${formatRelative(e.startUnix, e.endUnix)}\n`;
+        msg += `  ⏰ <t:${e.startUnix}:t> → <t:${e.endUnix}:t>\n\n`;
+      }
     }
 
     return interaction.reply(msg);

@@ -8,7 +8,7 @@ const commands = [
   new SlashCommandBuilder()
     .setName("eventsall")
     .setDescription("Show ALL ARC Raiders events for today (UTC)")
-].map(c => c.toJSON());
+].map(cmd => cmd.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
