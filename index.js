@@ -1,71 +1,117 @@
-require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
-const schedule = require('./schedule.json');
+import fs from "fs";
+import { Client, GatewayIntentBits } from "discord.js";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
-function getUpcomingSlots(hoursAhead) {
-  const now = new Date();
-  const slots = [];
+const HOURS_AHEAD = 2;
 
-  for (let i = 0; i <= hoursAhead; i++) {
-    const d = new Date(now.getTime() + i * 60 * 60 * 1000);
-    d.setUTCMinutes(0, 0, 0);
+// ---- LOAD SCHEDULE ----
+const schedule = JSON.parse(
+  fs.readFileSync("./schedule.json", "utf-8")
+);
 
-    const hh = String(d.getUTCHours()).padStart(2, '0');
-    const key = `${hh}:00`;
-
-    slots.push({
-      key,
-      date: d,
-      timestamp: Math.floor(d.getTime() / 1000)
-    });
-  }
-
-  return slots;
+// ---- TIME HELPERS ----
+function timeToDate(baseDate, timeStr) {
+  const [h, m] = timeStr.split(":").map(Number);
+  const d = new Date(baseDate);
+  d.setUTCHours(h, m, 0, 0);
+  return d;
 }
 
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
+// ---- BUILD EVENTS (generic) ----
+function buildEvents({ hoursAhead = null, todayOnly = false }) {
+  const now = new Date();
+  const cutoff = hoursAhead
+    ? new Date(now.getTime() + hoursAhead * 60 * 60 * 1000)
+    : null;
 
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-  if (interaction.commandName !== 'events') return;
+  const todayUTC = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate()
+  ));
 
-  const hoursAhead = interaction.options.getInteger('hours') ?? 2;
-  const slots = getUpcomingSlots(hoursAhead);
+  const days = todayOnly
+    ? [todayUTC]
+    : [todayUTC, new Date(todayUTC.getTime() + 86400000)];
 
-  let reply = `🛰 **ARC Raiders – Upcoming Events**\n`;
+  const events = [];
 
-  for (const slot of slots) {
-    const data = schedule[slot.key];
-    if (!data) continue;
+  for (const entry of schedule.data) {
+    for (const day of days) {
+      for (const t of entry.times) {
+        let start = timeToDate(day, t.start);
+        let end = timeToDate(day, t.end);
 
-    let hasEvents = false;
-    let block = `\n⏰ <t:${slot.timestamp}:t> → <t:${slot.timestamp}:R>\n`;
+        // midnight rollover
+        if (end <= start) {
+          end = new Date(end.getTime() + 86400000);
+        }
 
-    for (const [zone, events] of Object.entries(data)) {
-      const parts = [];
-      if (events.minor) parts.push(`Minor: ${events.minor}`);
-      if (events.major) parts.push(`Major: ${events.major}`);
+        if (hoursAhead) {
+          if (end < now || start > cutoff) continue;
+        }
 
-      if (parts.length) {
-        hasEvents = true;
-        block += `• **${zone}** → ${parts.join(' | ')}\n`;
+        events.push({
+          name: entry.name,
+          map: entry.map,
+          startUnix: Math.floor(start.getTime() / 1000),
+          endUnix: Math.floor(end.getTime() / 1000)
+        });
       }
     }
-
-    if (hasEvents) reply += block;
   }
 
-  if (reply.trim() === '🛰 **ARC Raiders – Upcoming Events**') {
-    reply += '\nNo events in the selected time window.';
-  }
+  return events.sort((a, b) => a.startUnix - b.startUnix);
+}
 
-  await interaction.reply(reply);
+// ---- BOT READY ----
+client.once("ready", () => {
+  console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
+// ---- SLASH COMMANDS ----
+client.on("interactionCreate", async interaction => {
+  if (!interaction.isChatInputCommand()) return;
+
+  // /events → next 2 hours
+  if (interaction.commandName === "events") {
+    const events = buildEvents({ hoursAhead: HOURS_AHEAD });
+
+    if (!events.length) {
+      return interaction.reply("No events in the next 2 hours.");
+    }
+
+    let msg = "**🛰️ ARC Raiders — Events (Next 2h)**\n\n";
+
+    for (const e of events) {
+      msg += `**${e.map}** — ${e.name}\n`;
+      msg += `⏰ <t:${e.startUnix}:R> → <t:${e.endUnix}:R>\n\n`;
+    }
+
+    return interaction.reply(msg);
+  }
+
+  // /eventsall → ALL events today (UTC)
+  if (interaction.commandName === "eventsall") {
+    const events = buildEvents({ todayOnly: true });
+
+    if (!events.length) {
+      return interaction.reply("No events found for today.");
+    }
+
+    let msg = "**🛰️ ARC Raiders — ALL Events Today (UTC)**\n\n";
+
+    for (const e of events) {
+      msg += `**${e.map}** — ${e.name}\n`;
+      msg += `⏰ <t:${e.startUnix}:t> → <t:${e.endUnix}:t>\n\n`;
+    }
+
+    return interaction.reply(msg);
+  }
+});
+
+// ---- LOGIN ----
 client.login(process.env.DISCORD_TOKEN);
