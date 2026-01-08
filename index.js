@@ -61,7 +61,7 @@ client.on('interactionCreate', async interaction => {
 
   try {
     if (interaction.commandName === 'events') {
-      const filtered = schedule.events.filter(e => e.end >= now);
+      const filtered = schedule.data.filter(e => e.end >= now);
 
       if (filtered.length === 0) {
         await interaction.editReply('No active or upcoming events.');
@@ -72,7 +72,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'eventsall') {
-      await interaction.editReply(buildMessage(schedule.events));
+      await interaction.editReply(buildMessage(schedule.data));
     }
   } catch (err) {
     console.error(err);
