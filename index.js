@@ -55,23 +55,28 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
+  await interaction.deferReply(); // <-- CRITICAL
+
   const now = Math.floor(Date.now() / 1000);
 
-  if (interaction.commandName === 'events') {
-    const filtered = schedule.events.filter(
-      e => e.end >= now
-    );
+  try {
+    if (interaction.commandName === 'events') {
+      const filtered = schedule.events.filter(e => e.end >= now);
 
-    if (filtered.length === 0) {
-      await interaction.reply('No active or upcoming events.');
-      return;
+      if (filtered.length === 0) {
+        await interaction.editReply('No active or upcoming events.');
+        return;
+      }
+
+      await interaction.editReply(buildMessage(filtered));
     }
 
-    await interaction.reply(buildMessage(filtered));
-  }
-
-  if (interaction.commandName === 'eventsall') {
-    await interaction.reply(buildMessage(schedule.events));
+    if (interaction.commandName === 'eventsall') {
+      await interaction.editReply(buildMessage(schedule.events));
+    }
+  } catch (err) {
+    console.error(err);
+    await interaction.editReply('Error processing events.');
   }
 });
 
